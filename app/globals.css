@@ -1,0 +1,207 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-surface: #fcf9f3;
+  --color-surface-dim: #dcdad4;
+  --color-surface-bright: #fcf9f3;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f6f3ed;
+  --color-surface-container: #f0eee8;
+  --color-surface-container-high: #ebe8e2;
+  --color-surface-container-highest: #e5e2dc;
+  --color-on-surface: #1c1c18;
+  --color-on-surface-variant: #5a413e;
+  --color-inverse-surface: #31312d;
+  --color-inverse-on-surface: #f3f0ea;
+  --color-outline: #8e706d;
+  --color-outline-variant: #e2bebb;
+  --color-surface-tint: #b32827;
+  
+  --color-primary: #9b1518;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #bd302d;
+  --color-on-primary-container: #ffdcd8;
+  --color-inverse-primary: #ffb4ac;
+  
+  --color-secondary: #525e7b;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #d0dcff;
+  --color-on-secondary-container: #55617d;
+  
+  --color-tertiary: #674700;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #865e00;
+  --color-on-tertiary-container: #ffdfae;
+  
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  
+  --color-primary-fixed: #ffdad6;
+  --color-primary-fixed-dim: #ffb4ac;
+  --color-on-primary-fixed: #410003;
+  --color-on-primary-fixed-variant: #900b12;
+  
+  --color-secondary-fixed: #d9e2ff;
+  --color-secondary-fixed-dim: #bac6e7;
+  --color-on-secondary-fixed: #0e1b34;
+  --color-on-secondary-fixed-variant: #3b4662;
+  
+  --color-tertiary-fixed: #ffdeaa;
+  --color-tertiary-fixed-dim: #fabc45;
+  --color-on-tertiary-fixed: #271900;
+  --color-on-tertiary-fixed-variant: #5f4100;
+  
+  --color-background: #fcf9f3;
+  --color-on-background: #1c1c18;
+  --color-surface-variant: #e5e2dc;
+  
+  --font-anton: var(--font-anton);
+  --font-work-sans: var(--font-work-sans);
+  --font-space-mono: var(--font-space-mono);
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-on-background);
+  font-family: var(--font-work-sans), sans-serif;
+  scrollbar-color: var(--color-on-surface) var(--color-surface-container);
+  scrollbar-width: thin;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbars legacy WebKit fallback */
+@supports not (scrollbar-color: auto) {
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-on-surface);
+    border: 2px solid var(--color-background);
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-surface-container);
+  }
+}
+
+/* Design System Utilities */
+@utility display-lg {
+  font-family: var(--font-anton), sans-serif;
+  font-size: 80px;
+  font-weight: 400;
+  line-height: 1.0;
+  letter-spacing: 0.02em;
+}
+
+@utility headline-lg {
+  font-family: var(--font-anton), sans-serif;
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+}
+
+@utility headline-lg-mobile {
+  font-family: var(--font-anton), sans-serif;
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+@utility headline-md {
+  font-family: var(--font-anton), sans-serif;
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+@utility body-lg {
+  font-family: var(--font-work-sans), sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+@utility body-md {
+  font-family: var(--font-work-sans), sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+@utility label-caps {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Halftone Ben-Day pattern utilities */
+@utility benday-dots-primary {
+  background-image: radial-gradient(#9b1518 1.5px, transparent 1.5px);
+  background-size: 8px 8px;
+}
+
+@utility benday-dots-secondary {
+  background-image: radial-gradient(#525e7b 1.5px, transparent 1.5px);
+  background-size: 8px 8px;
+}
+
+@utility benday-dots-tertiary {
+  background-image: radial-gradient(#674700 1.5px, transparent 1.5px);
+  background-size: 8px 8px;
+}
+
+@utility benday-dots-dark {
+  background-image: radial-gradient(#1c1c18 1.2px, transparent 1.2px);
+  background-size: 6px 6px;
+}
+
+@utility benday-dots-light {
+  background-image: radial-gradient(#dcdad4 1.2px, transparent 1.2px);
+  background-size: 6px 6px;
+}
+
+/* Stacked Tiers Hard Shadows */
+@utility hard-shadow {
+  box-shadow: 4px 4px 0px 0px #1c1c18;
+}
+
+@utility hard-shadow-lg {
+  box-shadow: 8px 8px 0px 0px #1c1c18;
+}
+
+@utility hard-shadow-primary {
+  box-shadow: 4px 4px 0px 0px #9b1518;
+}
+
+@utility hard-shadow-secondary {
+  box-shadow: 4px 4px 0px 0px #525e7b;
+}
+
+@utility hard-shadow-tertiary {
+  box-shadow: 4px 4px 0px 0px #674700;
+}
+
+/* Brutalist Button Transition Shift */
+@utility btn-brutalist {
+  position: relative;
+  transition: all 0.1s ease-in-out;
+
+  &:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px 0px currentColor;
+  }
+
+  &:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px 0px currentColor;
+  }
+}
