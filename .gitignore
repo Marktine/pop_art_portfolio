@@ -37,3 +37,6 @@ next-env.d.ts
 
 docs/design/
 docs/design/**/*
+
+blogs
+blogs/**/*
