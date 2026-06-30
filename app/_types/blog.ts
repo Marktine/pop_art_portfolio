@@ -1,12 +1,23 @@
-export interface BlogPost {
+export enum BlogPriority {
+  NORMAL="NORMAL",
+  SIDEBAR="SIDEBAR",
+  FEATURED="FEATURED",
+}
+export type BlogPost = {
+  id?: string;
   slug: string;
-  title: string;
   date: string;
-  category: string;
+  tags?: string;
+  title: string;
   image?: string;
-  author: string;
+  author?: string;
+  category: string;
   description?: string;
   readingTime?: string;
-  contentHTML: string;
+  contentHTML?: string;
+  priority?: BlogPriority;
   customVisual?: React.ReactNode;
 }
+
+export type BlogPostMetaData = Omit<BlogPost, 'customVisual' | 'contentHTML'>
+

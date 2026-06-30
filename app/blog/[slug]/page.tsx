@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPostBySlug } from "@/app/_utils/markdown";
 import Image from 'next/image';
-import MDXImage from "../components/MDXImage";
 
 interface IBlogPageProps {
   params: Promise<{ slug: string }>;
@@ -13,11 +12,11 @@ export default async function BlogPage({ params }: IBlogPageProps) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
 
-  console.log(post);
-
   if (!post) {
     notFound();
   }
+
+  const tagsList = post.tags ? post.tags.split(',').map((t: string) => t.trim()).filter(Boolean) : [];
 
   return (
     <div className="min-h-screen flex flex-col bg-surface selection:bg-primary selection:text-white font-sans text-on-surface">
@@ -25,27 +24,39 @@ export default async function BlogPage({ params }: IBlogPageProps) {
         {/* Banner Section */}
         <section className="border-b-4 border-on-surface bg-surface-bright py-12 md:py-16 relative overflow-hidden">
           <div className="absolute inset-0 benday-dots-light opacity-50 pointer-events-none" />
-          <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <div className="flex flex-col gap-2 max-w-4xl mx-auto px-6 relative z-10">
             <Link
               href="/blog"
               className="label-caps text-xs text-primary font-bold hover:underline mb-6 inline-block"
             >
               ← BACK TO THE JOURNAL
             </Link>
-
-            <span className="label-caps text-xs text-on-surface-variant block mb-3 font-mono">
-              {post.category} // {post.date}
-            </span>
-
-            <h1 className="display-lg text-4xl md:text-6xl uppercase leading-tight text-on-surface mb-6">
+            <div className="flex flex-wrap items-center gap-3 font-mono text-xs text-on-surface-variant">
+              <span className="label-caps">
+                {post.category} // {post.date}
+              </span>
+              
+            </div>
+            <h1 className="display-lg text-4xl md:text-6xl uppercase leading-tight text-on-surface">
               {post.title}
             </h1>
-
             <div className="flex gap-4 font-mono text-xs text-on-surface-variant">
               <span>{post.readingTime}</span>
               <span>•</span>
               <span>WRITTEN BY {post.author}</span>
             </div>
+            {tagsList.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {tagsList.map((tag) => (
+                    <span
+                      key={tag}
+                      className="font-mono text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 border border-on-surface/30 bg-surface-container-low text-on-surface-variant"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              )}
           </div>
         </section>
 
@@ -66,7 +77,7 @@ export default async function BlogPage({ params }: IBlogPageProps) {
             {/* Article Content */}
             <article
               className="prose max-w-none prose-neutral prose-headings:font-anton prose-headings:uppercase"
-              dangerouslySetInnerHTML={{ __html: post.contentHTML}}
+              dangerouslySetInnerHTML={{ __html: post.contentHTML || "" }}
             />
           </div>
         </section>

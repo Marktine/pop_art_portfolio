@@ -2,10 +2,10 @@
 
 import Link from "next/link"
 import Image from 'next/image';
-import { BlogPost } from '../../_types/blog';
+import { type BlogPostMetaData } from '../../_types/blog';
 
 interface ISecondaryGridPostItemProp {
-  post: BlogPost,
+  post: BlogPostMetaData,
   shadowEffect?: boolean,
   dotPatternBackground?: boolean,
   customVisual?: React.ReactNode,
@@ -17,6 +17,8 @@ export default function SecondaryGridPostItem({
   dotPatternBackground,
   customVisual = <></>,
 }: ISecondaryGridPostItemProp) {
+  const tagsList = post.tags ? post.tags.split(',').map((t: string) => t.trim()).filter(Boolean) : [];
+
   return (
     <Link
       href={`/blog/${post.slug}`}
@@ -45,9 +47,23 @@ export default function SecondaryGridPostItem({
           </div>
         ) : customVisual}
 
-        <span className="label-caps text-xs text-on-surface-variant block mb-4">
-          {post.date}
-        </span>
+        <div className="flex flex-wrap items-center gap-3 mb-4">
+          <span className="label-caps text-xs text-on-surface-variant font-mono">
+            {post.date}
+          </span>
+          {tagsList.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {tagsList.slice(0, 2).map((tag: string) => (
+                <span
+                  key={tag}
+                  className="font-mono text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 border border-on-surface/20 bg-surface-container-low text-on-surface-variant"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
         <h3 className="headline-md text-2xl uppercase mb-4 group-hover:text-primary transition-colors">
           {post.title}
         </h3>

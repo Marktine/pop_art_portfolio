@@ -1,98 +1,39 @@
-"use client";
-
-import React, { useState } from "react";
+"use server";
 import Link from "next/link";
 
-import { BlogPost } from '../_types/blog';
-import FeaturedPostCardItem from "./components/FeaturedPostCardItem";
+import EmailSubscribe from "./components/EmailSubscribe";
 import SidebarBlogPostItem from "./components/SidebarBlogPostItem";
+import FeaturedPostCardItem from "./components/FeaturedPostCardItem";
 import SecondaryGridPostItem from "./components/SecondaryGridPostItem";
-import { Mail } from "lucide-react";
+import SearchBar from "./components/SearchBar";
+import { getSortedPosts } from '../_utils/markdown';
+import { BlogPriority } from "../_types/blog";
 
-export default function Blog() {
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
+export default async function Blog(props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const resolvedSearchParams = await props.searchParams;
+  const q = resolvedSearchParams.q;
+  const searchQuery = typeof q === 'string' ? q : '';
 
-  const handleSubscribe = (e: React.ChangeEvent) => {
-    e.preventDefault();
-    if (email) {
-      setSubscribed(true);
-      setTimeout(() => {
-        setSubscribed(false);
-        setEmail("");
-      }, 5000);
-    }
-  };
+  const gridPosts = await getSortedPosts(BlogPriority.NORMAL);
+  const featuredPost = await getSortedPosts(BlogPriority.FEATURED);
+  const sidebarPosts = await getSortedPosts(BlogPriority.SIDEBAR);
 
-  const featuredPost: BlogPost = {
-    id: "featured-1",
-    slug: "death-of-minimalist-aesthetic",
-    title: "The Death of the Minimalist Corporate Aesthetic",
-    date: "01.24.24",
-    category: "FEATURED",
-    image: "/images/pop_art_nyc.jpg",
-    description:
-      "Why the safe, 'blanding' of corporate identities is finally losing its grip. We explore how Refined Brutalism is bringing back the soul of commercial art through heavy weights and unapologetic geometry.",
-  };
-
-  const sidebarPosts: BlogPost[] = [
-    {
-      id: "side-1",
-      slug: "grids-cage-or-catalyst",
-      title: "Grids as Cage or Catalyst?",
-      date: "01.20.24",
-      category: "DESIGN THEORY",
-      image: "/images/pop_art_designer.jpg",
-      description:
-        "Breaking the 12-column cage without losing the structural integrity of your layout.",
-    },
-    {
-      id: "side-2",
-      slug: "pricing-the-unpriced",
-      title: "Pricing the Unpriced",
-      date: "01.15.24",
-      category: "BUSINESS",
-      description:
-        "How to value artistic intuition in a data-driven commercial landscape.",
-    },
-  ];
-
-  const gridPosts: BlogPost[] = [
-    {
-      id: "grid-1",
-      slug: "freelance-manifesto",
-      title: "The Freelance Manifesto",
-      date: "01.10.24",
-      category: "MANIFESTO",
-      image: "/images/pop_art_tools.jpg",
-      description:
-        "Redefining professional autonomy in the era of automated creative tools.",
-    },
-    {
-      id: "grid-2",
-      slug: "limited-palettes",
-      title: "Limited Palettes",
-      date: "01.05.24",
-      category: "COLOR THEORY",
-      description:
-        "Why restricting your color choices leads to more powerful, memorable visual identities.",
-      customVisual: (
-        <div className="mb-6 aspect-square bg-tertiary-container border-4 border-on-surface flex items-center justify-center p-6 text-center">
-          <h4 className="headline-md text-on-tertiary-container uppercase">Is Color Dead?</h4>
-        </div>
-      ),
-    },
-    {
-      id: "grid-3",
-      slug: "brutalist-structures",
-      title: "Brutalist Structures",
-      date: "12.28.23",
-      category: "ARCHITECTURE",
-      image: "/images/pop_art_nyc.jpg",
-      description:
-        "Finding beauty in the raw, unrefined shapes of 1960s New York architecture.",
-    },
-  ];
+  // TODO: Need a way to optimize this!
+  // May be at indexing at build time.
+  const allPosts = [...featuredPost, ...sidebarPosts, ...gridPosts];
+  const filteredPosts = searchQuery
+    ? allPosts.filter((post) => {
+        const query = searchQuery.toLowerCase();
+        return (
+          post.title?.toLowerCase().includes(query) ||
+          post.description?.toLowerCase().includes(query) ||
+          post.category?.toLowerCase().includes(query) ||
+          post.tags?.toLowerCase().includes(query)
+        );
+      })
+    : [];
 
   return (
     <div className="min-h-screen flex flex-col bg-surface selection:bg-primary selection:text-white font-sans text-on-surface">
@@ -119,35 +60,91 @@ export default function Blog() {
 
         {/* Blog Grid */}
         <section className="py-12 md:py-20 bg-surface">
+          {/* Search bar */}
+          <div className="max-w-7xl mx-auto px-6 mb-12">
+            <SearchBar defaultValue={searchQuery} />
+          </div>
+
           <div className="max-w-7xl mx-auto px-6">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 border-4 border-on-surface">
-              {/* Featured Post */}
-              <FeaturedPostCardItem
-                post={featuredPost}
-              />
-
-              {/* Sidebar Column */}
-              <div className="lg:col-span-4 flex flex-col divide-y-4 divide-on-surface">
-                {sidebarPosts.map((post, idx) => (
-                  <SidebarBlogPostItem
-                    key={idx}
-                    post={post}
+            {searchQuery ? (
+              // Search Results Layout
+              filteredPosts.length > 0 ? (
+                <div id="searchResultContainer">
+                  <div className="mb-8">
+                    <div className="bg-primary text-white font-mono text-xs font-bold tracking-widest px-4 py-1.5 border-2 border-on-surface inline-block mb-4 uppercase">
+                      SEARCH RESULTS
+                    </div>
+                    <h2 className="headline-lg text-3xl md:text-5xl uppercase leading-[0.9]">
+                      Found {filteredPosts.length} article{filteredPosts.length !== 1 ? 's' : ''} for <span className="text-primary">"{searchQuery}"</span>
+                    </h2>
+                  </div>
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 border-4 border-on-surface">
+                    {filteredPosts.map((post, idx) => (
+                      <SecondaryGridPostItem
+                        shadowEffect={idx % 3 === 0}
+                        dotPatternBackground={idx === filteredPosts.length - 1}
+                        key={idx}
+                        post={post}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                // No results found
+                <div className="border-4 border-on-surface bg-surface-container-high p-12 text-center relative overflow-hidden">
+                  <div className="absolute inset-0 benday-dots-dark opacity-10 pointer-events-none" />
+                  <div className="relative z-10 max-w-lg mx-auto">
+                    <div className="bg-primary text-white font-mono text-xs font-bold tracking-widest px-4 py-1.5 border-2 border-on-surface inline-block mb-6 uppercase">
+                      ERROR // NO_MATCHES
+                    </div>
+                    <h3 className="headline-lg text-3xl md:text-5xl uppercase mb-6 leading-tight">
+                      No Articles Found.
+                    </h3>
+                    <p className="body-lg text-on-surface-variant mb-8">
+                      We searched high and low but couldn't find any dispatches matching <span className="font-bold text-primary">"{searchQuery}"</span>. Try checking your spelling or use more general terms.
+                    </p>
+                    <Link
+                      href="/blog"
+                      className="btn-brutalist inline-block bg-inverse-surface text-white font-anton text-xl py-4 px-8 border-4 border-on-surface hard-shadow uppercase cursor-pointer"
+                    >
+                      Clear Search
+                    </Link>
+                  </div>
+                </div>
+              )
+            ) : (
+              // Default Blog Layout
+              <>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 border-4 border-on-surface">
+                  {/* Featured Post */}
+                  <FeaturedPostCardItem
+                    post={featuredPost[0]}
                   />
-                ))}
-              </div>
-            </div>
 
-            {/* Secondary Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 border-x-4 border-b-4 border-on-surface">
-              {gridPosts.map((post, idx) => (
-                <SecondaryGridPostItem
-                  shadowEffect
-                  dotPatternBackground
-                  key={idx}
-                  post={post}
-                />
-              ))}
-            </div>
+                  {/* Sidebar Column */}
+                  <div className="lg:col-span-4 flex flex-col divide-y-4 divide-on-surface">
+                    {sidebarPosts.map((post, idx) => (
+                      <SidebarBlogPostItem
+                        key={idx}
+                        post={post}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Secondary Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 border-x-4 border-b-4 border-on-surface">
+                  {gridPosts.map((post, idx) => (
+                    <SecondaryGridPostItem
+                      shadowEffect
+                      dotPatternBackground
+                      key={idx}
+                      post={post}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </section>
 
@@ -168,55 +165,11 @@ export default function Blog() {
                   month.
                 </p>
               </div>
-
-              <div className="w-full lg:w-1/2 max-w-md relative z-10">
-                {subscribed ? (
-                  <div className="bg-surface text-on-surface border-4 border-on-surface p-6 text-center">
-                    <span className="label-caps text-xs font-bold text-primary block mb-2">
-                      SUCCESS // INKED
-                    </span>
-                    <h3 className="headline-md text-2xl uppercase mb-2">YOU ARE SUBSCRIBED!</h3>
-                    <p className="body-md text-on-surface-variant">
-                      Welcome to the journal. Look out for our next dispatch.
-                    </p>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubscribe} className="flex flex-col gap-4">
-                    <input
-                      className="bg-surface text-on-surface font-mono text-xs font-bold p-4 border-4 border-on-surface focus:ring-0 focus:border-on-surface focus:bg-tertiary-fixed outline-none transition-colors placeholder:text-on-surface-variant/50"
-                      placeholder="EMAIL@ADDRESS.COM"
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <button
-                      type="submit"
-                      className="btn-brutalist bg-inverse-surface text-white font-anton text-2xl py-4 border-4 border-on-surface hard-shadow pop-hover transition-all uppercase cursor-pointer"
-                    >
-                      Subscribe Now
-                    </button>
-                  </form>
-                )}
-              </div>
+              <EmailSubscribe />
             </div>
           </div>
         </section>
       </main>
-
-      {/* Floating Action Button */}
-      <div className="fixed bottom-8 right-8 z-50">
-        <button
-          onClick={() => {
-            const el = document.getElementById("newsletter");
-            el?.scrollIntoView({ behavior: "smooth" });
-          }}
-          className="w-16 h-16 rounded-none bg-tertiary-fixed text-on-tertiary-fixed border-4 border-on-surface hard-shadow flex items-center justify-center hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer"
-          title="Subscribe to Newsletter"
-        >
-          <Mail />
-        </button>
-      </div>
 
       {/* FOOTER GRID */}
       <footer className="border-t-4 border-on-surface bg-on-background text-inverse-on-surface py-12 px-6">
