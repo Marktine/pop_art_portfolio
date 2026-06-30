@@ -4,6 +4,7 @@ import EmailSubscribe from "./components/EmailSubscribe";
 import SidebarBlogPostItem from "./components/SidebarBlogPostItem";
 import FeaturedPostCardItem from "./components/FeaturedPostCardItem";
 import SecondaryGridPostItem from "./components/SecondaryGridPostItem";
+import NormalPostCarousel from "./components/NormalPostCarousel";
 import SearchBar from "./components/SearchBar";
 import { getSortedPosts } from '../_utils/markdown';
 import { BlogPriority } from "../_types/blog";
@@ -132,16 +133,12 @@ export default async function Blog(props: {
                 </div>
 
                 {/* Secondary Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 border-x-4 border-b-4 border-on-surface">
-                  {gridPosts.map((post, idx) => (
-                    <SecondaryGridPostItem
-                      shadowEffect
-                      dotPatternBackground
-                      key={idx}
-                      post={post}
-                    />
-                  ))}
-                </div>
+                <NormalPostCarousel
+                  posts={gridPosts}
+                  desktopLimit={3}
+                  tabletLimit={2}
+                  mobileLimit={1}
+                />
               </>
             )}
           </div>

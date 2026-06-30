@@ -10,6 +10,8 @@ interface ISecondaryGridPostItemProp {
   shadowEffect?: boolean,
   dotPatternBackground?: boolean,
   customVisual?: React.ReactNode,
+  className?: string,
+  hasBottomBorder?: boolean,
 }
 
 export default function SecondaryGridPostItem({
@@ -17,11 +19,13 @@ export default function SecondaryGridPostItem({
   shadowEffect,
   dotPatternBackground,
   customVisual = <></>,
+  className = "",
+  hasBottomBorder = true,
 }: ISecondaryGridPostItemProp) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className={`p-8 group cursor-pointer hover:bg-surface-container transition-colors relative flex flex-col justify-between border-b-4 lg:border-b-0 border-on-surface`}
+      className={`p-8 group cursor-pointer hover:bg-surface-container transition-colors relative flex flex-col justify-between ${hasBottomBorder ? 'border-b-4 lg:border-b-0' : ''} border-on-surface ${className}`}
     >
       {/* For background benday dot pattern on Post 6 (last post) */}
       {dotPatternBackground && (
