@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image';
 import { type BlogPostMetaData } from '../../_types/blog'
+import BlogTags from './BlogTags';
 
 interface IFeaturedPostCardItemProp {
   post: BlogPostMetaData,
@@ -10,7 +11,6 @@ interface IFeaturedPostCardItemProp {
 
 export default function FeaturedPostCardItem({ post }: IFeaturedPostCardItemProp) {
   const { slug, category, date, title, image, description, readingTime, tags } = post;
-  const tagsList = tags ? tags.split(',').map((t: string) => t.trim()).filter(Boolean) : [];
   return (
     <Link
       href={`/blog/${slug}`}
@@ -22,18 +22,7 @@ export default function FeaturedPostCardItem({ post }: IFeaturedPostCardItemProp
             <span className="label-caps text-xs text-primary font-bold">
               {category} // {date}
             </span>
-            {tagsList.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
-                {tagsList.map((tag: string) => (
-                  <span
-                    key={tag}
-                    className="font-mono text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 border border-on-surface/20 bg-surface-container-low text-on-surface-variant"
-                  >
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            )}
+            <BlogTags tags={tags ? tags : ""}/>
             <div className="h-px grow bg-on-surface opacity-20"></div>
           </div>
 

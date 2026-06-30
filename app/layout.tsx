@@ -49,7 +49,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-background text-on-surface">
         <div className="min-h-screen flex flex-col bg-surface selection:bg-primary selection:text-white font-sans text-on-surface">
         {/* PERSISTENT HEADER GRID */}
-        <header className="border-b-4 border-on-surface bg-surface sticky top-0 z-40">
+        <header className="border-b-4 border-on-surface bg-surface sticky top-0 z-50">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-stretch">
             {/* Logo Brand Box */}
             <div className="p-6 md:px-8 border-b-4 md:border-b-0 md:border-r-4 border-on-surface flex items-center bg-surface-bright md:w-80">

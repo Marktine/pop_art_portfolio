@@ -1,6 +1,5 @@
 "use server";
 import Link from "next/link";
-
 import EmailSubscribe from "./components/EmailSubscribe";
 import SidebarBlogPostItem from "./components/SidebarBlogPostItem";
 import FeaturedPostCardItem from "./components/FeaturedPostCardItem";

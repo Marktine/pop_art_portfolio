@@ -3,13 +3,12 @@
 import Link from "next/link"
 import Image from 'next/image'
 import { type BlogPostMetaData } from '../../_types/blog'
+import BlogTags from "./BlogTags";
 
 interface ISidebarBlogPostItemProp {
   post: BlogPostMetaData,
 }
 export default function SidebarBlogPostItem({ post }: ISidebarBlogPostItemProp) {
-  const tagsList = post.tags ? post.tags.split(',').map((t: string) => t.trim()).filter(Boolean) : [];
-
   return (
     <Link
       href={`/blog/${post.slug}`}
@@ -20,18 +19,7 @@ export default function SidebarBlogPostItem({ post }: ISidebarBlogPostItemProp) 
           <span className="label-caps text-xs text-on-surface-variant font-mono">
             {post.date} // {post.category}
           </span>
-          {tagsList.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {tagsList.slice(0, 2).map((tag: string) => (
-                <span
-                  key={tag}
-                  className="font-mono text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 border border-on-surface/20 bg-surface-container-low text-on-surface-variant"
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          )}
+          <BlogTags tags={post.tags ? post.tags : ""}/>
         </div>
         <h3 className="headline-md text-2xl uppercase mb-4 group-hover:text-primary transition-colors">
           {post.title}

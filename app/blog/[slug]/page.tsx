@@ -11,7 +11,6 @@ interface IBlogPageProps {
 export default async function BlogPage({ params }: IBlogPageProps) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
-
   if (!post) {
     notFound();
   }

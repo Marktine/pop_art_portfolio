@@ -23,13 +23,16 @@ function buildIndex() {
       return {
         id: slug,
         title: data.title || 'Untitled',
-        tags: Array.isArray(data.tags) ? data.tags.join(' ') : '',
+        tags: data.tags.trim(),
+        image: data.image,
         content: content,
+        date: data.date,
+        description: data.description,
       };
     });
   const miniSearch = new MiniSearch({
-    fields: ['title', 'tags', 'content'],
-    storeFields: ['title']
+    fields: ['title', 'tags', 'content', 'description'],
+    storeFields: ['id', 'title', 'image', 'tags', 'description', 'date']
   });
 
   miniSearch.addAll(documents);
