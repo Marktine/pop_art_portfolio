@@ -24,6 +24,13 @@
 
 ### TODO: 
 - [x] Enhance blog posts search with minisearch.
-- [ ] Making carousel for normal blog posts section.
-- [ ] Make markdown table works.
-- [ ] Responsive for image. (Check mobile display).
+- [x] Making carousel for normal blog posts section.
+- [x] Make markdown table works.
+
+## 2026-07-02
+
+### TODO:
+- [ ] Responsive for header (mobile device)
+- [ ] The search result at `blog/page.tsx` not working correctly.
+- [ ] Start working on project inquire and email subscribe.
+- [ ] Update footer UI, Move it into `components/`.
